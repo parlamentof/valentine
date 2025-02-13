@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Валентинка</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            background-color: white;
+            font-family: Arial, sans-serif;
+            font-size: 40px;
+            font-weight: bold;
+            color: red;
+            text-align: center;
+            position: relative;
+            animation: bgPulse 3s infinite alternate;
+        }
+        @keyframes bgPulse {
+            from { background-color: white; }
+            to { background-color: #ffcccc; }
+        }
+        .quiz-container, .message-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .quiz-container {
+            display: flex;
+        }
+        .message-container {
+            display: none;
+        }
+        .question {
+            margin-bottom: 20px;
+            font-size: 30px;
+        }
+        .button {
+            font-size: 25px;
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .correct { background-color: green !important; }
+        .incorrect { background-color: red !important; }
+        .message { opacity: 0; animation: fadeIn 1s ease-in-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .falling-heart {
+            position: absolute;
+            color: red;
+            font-size: 30px;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            from { transform: translateY(-10vh); opacity: 1; }
+            to { transform: translateY(100vh); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="question">Когда мы начали отношения?</div>
+        <button class="button" onclick="checkAnswer(this, true)">6 ноября</button>
+        <button class="button" onclick="checkAnswer(this, false)">13 ноября</button>
+    </div>
+    <div class="message-container">
+        <div class="message">жмякай</div>
+        <img id="finalImage" src="C:\rrr1\rrr.jpg" alt="Любовь" style="display: none; width: 300px; margin-top: 20px;">
+    </div>
+    <script>
+        const questions = [
+            { question: "Когда мы начали отношения?", answers: ["6 ноября", "13 ноября"], correct: 0 },
+            { question: "Как мы назовём нашу дочку?", answers: ["Алина", "Алиса"], correct: 1 },
+            { question: "Любишь меня?", answers: ["Да", "Не нажимать"], correct: 0 }
+        ];
+        let currentQuestion = 0;
+        function checkAnswer(button, isCorrect) {
+            if (isCorrect) {
+                button.classList.add("correct");
+                setTimeout(nextQuestion, 1000);
+            } else {
+                button.classList.add("incorrect");
+            }
+        }
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                const quizContainer = document.querySelector(".quiz-container");
+                quizContainer.innerHTML = `<div class='question'>${questions[currentQuestion].question}</div>`;
+                questions[currentQuestion].answers.forEach((answer, index) => {
+                    const btn = document.createElement("button");
+                    btn.classList.add("button");
+                    btn.textContent = answer;
+                    btn.onclick = () => checkAnswer(btn, index === questions[currentQuestion].correct);
+                    quizContainer.appendChild(btn);
+                });
+            } else {
+                document.querySelector(".quiz-container").style.display = "none";
+                startMessages();
+            }
+        }
+        function startMessages() {
+            document.querySelector(".message-container").style.display = "flex";
+            const messages = [
+                "ты моя умничка", "я счастлив что мы встретились", "моя любимая девочка", "я",
+                "люблю", "тебя", "котёнок", "ты лучше всех", "я так люблю твои глазки",
+                "ты моё счастье", "с тобой так тепло", "ты самое лучшее что у меня есть",
+                "я всегда буду рядом", "люблю твои милые ушки"
+            ];
+            let index = 0;
+            document.body.addEventListener("click", function() {
+                let messageElement = document.querySelector(".message");
+                if (index < messages.length) {
+                    messageElement.textContent = messages[index];
+                    messageElement.style.opacity = "0";
+                    messageElement.style.animation = "none";
+                    void messageElement.offsetWidth;
+                    messageElement.style.animation = "fadeIn 1s ease-in-out forwards";
+                    index++;
+                } else {
+                    document.getElementById("finalImage").style.display = "block";
+                }
+            });
+            setInterval(createFallingHeart, 300);
+        }
+        function createFallingHeart() {
+            const heart = document.createElement("div");
+            heart.classList.add("falling-heart");
+            heart.innerHTML = "❤️";
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.animationDuration = (Math.random() * 3 + 2) + "s";
+            heart.style.fontSize = (Math.random() * 20 + 10) + "px";
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 5000);
+        }
+    </script>
+</body>
+</html>
